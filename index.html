@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <!-- PWA / Add to Home Screen -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="FMS Alerts">
+    <meta name="application-name" content="Food Management System">
+    <meta name="theme-color" content="#21808d">
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Touch icon for iOS home screen -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%2321808d'/%3E%3Ctext y='.9em' font-size='75' x='12'%3E🍽%3C/text%3E%3C/svg%3E">
+    <title>Food Management System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Login Page -->
+    <div id="loginPage" class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <i class="fas fa-utensils login-icon"></i>
+                <h1>Food Management System</h1>
+                <p>Professional Food Inventory &amp; Compliance Management</p>
+            </div>
+            
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" id="username" class="form-control" placeholder="Enter username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" id="password" class="form-control" placeholder="Enter password" required>
+                </div><br><br>
+                
+                <button type="submit" class="btn btn--primary btn--full-width">Login</button><br><br>
+                
+                <div id="loginError" class="error-message hidden">Invalid credentials. Please try again.</div><br>
+
+                <p class="auth-switch-text">Don't have an account? <a href="#" id="goToRegister" class="auth-link">Register here</a></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Registration Page -->
+    <div id="registerPage" class="login-container hidden">
+        <div class="login-card register-card">
+            <div class="login-header">
+                <i class="fas fa-user-plus login-icon"></i>
+                <h1>Create Account</h1>
+                <p>Register to access the Food Management System</p>
+            </div>
+
+            <form id="registerForm" class="login-form">
+                <div class="form-group">
+                    <label for="regName" class="form-label">Full Name *</label>
+                    <input type="text" id="regName" class="form-control" placeholder="Enter your full name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="regUsername" class="form-label">Username *</label>
+                    <input type="text" id="regUsername" class="form-control" placeholder="Choose a username" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="regEmail" class="form-label">Email Address *</label>
+                    <input type="email" id="regEmail" class="form-control" placeholder="Enter your email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="regPassword" class="form-label">Password *</label>
+                    <input type="password" id="regPassword" class="form-control" placeholder="Create a password (min 6 chars)" required minlength="6">
+                </div>
+
+                <div class="form-group">
+                    <label for="regConfirmPassword" class="form-label">Confirm Password *</label>
+                    <input type="password" id="regConfirmPassword" class="form-control" placeholder="Re-enter your password" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="regRole" class="form-label">Role</label>
+                    <select id="regRole" class="form-control">
+                        <option value="Staff">Staff</option>
+                        <option value="Manager">Manager</option>
+                        <option value="Administrator">Administrator</option>
+                    </select>
+                </div><br>
+
+                <button type="submit" class="btn btn--primary btn--full-width">Create Account</button><br><br>
+
+                <div id="registerError" class="error-message hidden"></div>
+                <div id="registerSuccess" class="success-message hidden">Account created successfully! You can now log in.</div>
+
+                <p class="auth-switch-text">Already have an account? <a href="#" id="goToLogin" class="auth-link">Login here</a></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Application -->
+    <div id="mainApp" class="main-app hidden">
+        <!-- Navigation Header -->
+        <header class="navbar">
+            <div class="navbar-content">
+                <div class="navbar-brand">
+                    <button id="sidebarToggle" class="sidebar-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <i class="fas fa-utensils brand-icon"></i>
+                    <span class="brand-text">Food Management System</span>
+                </div>
+                
+                <div class="navbar-actions">
+                    <span class="user-info" id="navWelcome">Welcome</span>
+
+                    <!-- Keyboard Shortcuts -->
+                    <button class="alert-bell-btn" onclick="showShortcutsHelp()" title="Keyboard Shortcuts (Ctrl+K)">
+                        <i class="fas fa-keyboard"></i>
+                    </button>
+
+                    <!-- Dark Mode Toggle -->
+                    <button id="darkModeBtn" class="alert-bell-btn" onclick="toggleDarkMode()" title="Toggle Dark Mode (Ctrl+Backslash)">
+                        <i class="fas fa-moon"></i>
+                    </button>
+
+                    <!-- Alert Bell -->
+                    <button id="alertBellBtn" class="alert-bell-btn" onclick="toggleAlertPanel()" title="Smart Alerts">
+                        <i class="fas fa-bell"></i>
+                        <span id="alertBadge" class="alert-badge" style="display:none">0</span>
+                    </button>
+
+                    <button id="logoutBtn" class="btn btn--outline btn--sm">
+                        <i class="fas fa-sign-out-alt"></i> Logout
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Sidebar Navigation -->
+        <nav id="sidebar" class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="#" data-page="dashboard" class="sidebar-link active">
+                    <i class="fas fa-chart-line"></i> Dashboard
+                </a></li>
+                <li><a href="#" data-page="inventory" class="sidebar-link">
+                    <i class="fas fa-boxes"></i> Inventory
+                </a></li>
+                <li><a href="#" data-page="suppliers" class="sidebar-link">
+                    <i class="fas fa-truck"></i> Suppliers
+                </a></li>
+                <li><a href="#" data-page="haccp" class="sidebar-link">
+                    <i class="fas fa-clipboard-check"></i> HACCP
+                </a></li>
+                <li><a href="#" data-page="wastage" class="sidebar-link">
+                    <i class="fas fa-trash-alt"></i> Wastage
+                </a></li>
+                <li><a href="#" data-page="reports" class="sidebar-link">
+                    <i class="fas fa-file-alt"></i> Reports
+                </a></li>
+                <li><a href="#" data-page="settings" class="sidebar-link">
+                    <i class="fas fa-cog"></i> Settings
+                </a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Dashboard Page -->
+            <div id="dashboard" class="page active">
+                <div class="page-header">
+                    <h1>Dashboard</h1>
+                    <p>Overview of your food management system</p>
+                </div>
+                
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-boxes"></i>
+                        </div>
+                        <div class="metric-content">
+                            <h3 id="totalItems">0</h3>
+                            <p>Total Food Items</p>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-card warning">
+                        <div class="metric-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="metric-content">
+                            <h3 id="lowStockAlerts">0</h3>
+                            <p>Low Stock Alerts</p>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-icon">
+                            <i class="fas fa-truck"></i>
+                        </div>
+                        <div class="metric-content">
+                            <h3 id="totalSuppliers">0</h3>
+                            <p>Total Suppliers</p>
+                        </div>
+                    </div>
+                    
+                    <div class="metric-card error">
+                        <div class="metric-icon">
+                            <i class="fas fa-clipboard-check"></i>
+                        </div>
+                        <div class="metric-content">
+                            <h3 id="pendingInspections">0</h3>
+                            <p>Pending Inspections</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Smart Alert Summary Widget -->
+                <div class="card dashboard-alert-card">
+                    <div class="card__body">
+                        <div class="dashboard-alert-card__header">
+                            <h3><i class="fas fa-bell"></i> Smart Alerts</h3>
+                            <button class="btn btn--sm btn--outline" onclick="toggleAlertPanel()">
+                                View All <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                        <div id="dashboardAlertSummary">
+                            <!-- populated by alerts.js -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <div class="dashboard-section">
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Category Distribution</h3>
+                                <div class="chart-container">
+                                    <canvas id="categoryChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-section">
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Stock Levels Trend</h3>
+                                <div class="chart-container">
+                                    <canvas id="stockChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-section">
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Supplier Distribution</h3>
+                                <div class="chart-container">
+                                    <canvas id="supplierChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-section">
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Recent Activities</h3>
+                                <div id="recentActivities" class="activity-list">
+                                    <!-- Activities will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inventory Page -->
+            <div id="inventory" class="page">
+                <div class="page-header">
+                    <h1>Food Inventory</h1>
+                    <button id="addItemBtn" class="btn btn--primary">
+                        <i class="fas fa-plus"></i> Add Item
+                    </button>
+                </div>
+                
+                <div class="card">
+                    <div class="card__body">
+                        <div class="table-controls">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="inventorySearch" placeholder="Search items..." class="form-control">
+                            </div>
+                            <select id="categoryFilter" class="form-control">
+                                <option value="">All Categories</option>
+                            </select>
+                            <button id="exportInventoryBtn" class="btn btn--outline">
+                                <i class="fas fa-download"></i> Export CSV
+                            </button>
+                        </div>
+                        
+                        <div class="table-container">
+                            <table id="inventoryTable" class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th data-sort="name">Item Name <i class="fas fa-sort"></i></th>
+                                        <th data-sort="category">Category <i class="fas fa-sort"></i></th>
+                                        <th data-sort="quantity">Quantity <i class="fas fa-sort"></i></th>
+                                        <th data-sort="expiryDate">Expiry Date <i class="fas fa-sort"></i></th>
+                                        <th data-sort="supplier">Supplier <i class="fas fa-sort"></i></th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="inventoryTableBody">
+                                    <!-- Table rows will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div id="inventoryPagination" class="pagination">
+                            <!-- Pagination will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Suppliers Page -->
+            <div id="suppliers" class="page">
+                <div class="page-header">
+                    <h1>Supplier Management</h1>
+                    <button id="addSupplierBtn" class="btn btn--primary">
+                        <i class="fas fa-plus"></i> Add Supplier
+                    </button>
+                </div>
+                
+                <div class="card">
+                    <div class="card__body">
+                        <div class="table-controls">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="supplierSearch" placeholder="Search suppliers..." class="form-control">
+                            </div>
+                        </div>
+                        
+                        <div class="table-container">
+                            <table id="supplierTable" class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Supplier Name</th>
+                                        <th>Contact Person</th>
+                                        <th>Phone</th>
+                                        <th>Categories</th>
+                                        <th>Rating</th>
+                                        <th>Last Supply</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="supplierTableBody">
+                                    <!-- Table rows will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HACCP Page -->
+            <div id="haccp" class="page">
+                <div class="page-header">
+                    <h1>HACCP Compliance</h1>
+                    <button id="addHaccpBtn" class="btn btn--primary">
+                        <i class="fas fa-plus"></i> New Inspection
+                    </button>
+                </div>
+                
+                <div class="card">
+                    <div class="card__body">
+                        <div class="table-controls">
+                            <select id="statusFilter" class="form-control">
+                                <option value="">All Status</option>
+                                <option value="Passed">Passed</option>
+                                <option value="Failed">Failed</option>
+                                <option value="Needs Review">Needs Review</option>
+                            </select>
+                            <input type="date" id="dateFilter" class="form-control">
+                        </div>
+                        
+                        <div class="table-container">
+                            <table id="haccpTable" class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Inspector</th>
+                                        <th>Area</th>
+                                        <th>Temperature</th>
+                                        <th>Hygiene Rating</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="haccpTableBody">
+                                    <!-- Table rows will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wastage Page -->
+            <div id="wastage" class="page">
+                <div class="page-header">
+                    <h1>Wastage Tracking</h1>
+                    <button id="addWastageBtn" class="btn btn--primary">
+                        <i class="fas fa-plus"></i> Record Wastage
+                    </button>
+                </div>
+
+                <!-- Wastage Analytics Panel -->
+                <div class="card wa-card">
+                    <div class="card__body">
+                        <div class="wa-card-header">
+                            <h3><i class="fas fa-chart-line"></i> Wastage Analytics</h3>
+                            <span class="wa-subtitle">Trends, top items &amp; reason breakdown</span>
+                        </div>
+                        <div id="wastageAnalyticsPanel">
+                            <!-- populated by features.js -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <div class="dashboard-section">
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Wastage by Category</h3>
+                                <div class="chart-container">
+                                    <canvas id="wastageChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="dashboard-section">
+                        <div class="card">
+                            <div class="card__body">
+                                <h3>Monthly Wastage Trend</h3>
+                                <div class="chart-container">
+                                    <canvas id="wastageTimeChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card__body">
+                        <h3>Wastage Records</h3>
+                        <div class="table-container">
+                            <table id="wastageTable" class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Item</th>
+                                        <th>Quantity</th>
+                                        <th>Reason</th>
+                                        <th>Cost Impact</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="wastageTableBody">
+                                    <!-- Table rows will be populated by JavaScript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reports Page -->
+            <div id="reports" class="page">
+                <div class="page-header">
+                    <h1>Reports &amp; Analytics</h1>
+                </div>
+                
+                <div class="reports-grid">
+                    <div class="report-card" data-report="inventory">
+                        <i class="fas fa-boxes"></i>
+                        <h3>Inventory Status Report</h3>
+                        <p>Current stock levels and alerts</p>
+                        <button class="btn btn--primary btn--sm">Generate Report</button>
+                    </div>
+                    
+                    <div class="report-card" data-report="supplier">
+                        <i class="fas fa-truck"></i>
+                        <h3>Supplier Performance</h3>
+                        <p>Supplier ratings and delivery analysis</p>
+                        <button class="btn btn--primary btn--sm">Generate Report</button>
+                    </div>
+                    
+                    <div class="report-card" data-report="haccp">
+                        <i class="fas fa-clipboard-check"></i>
+                        <h3>HACCP Compliance</h3>
+                        <p>Inspection summary and compliance status</p>
+                        <button class="btn btn--primary btn--sm">Generate Report</button>
+                    </div>
+                    
+                    <div class="report-card" data-report="wastage">
+                        <i class="fas fa-trash-alt"></i>
+                        <h3>Wastage Analysis</h3>
+                        <p>Cost analysis and wastage trends</p>
+                        <button class="btn btn--primary btn--sm">Generate Report</button>
+                    </div>
+                </div>
+                
+                <div id="reportContent" class="card hidden">
+                    <div class="card__body">
+                        <div class="report-header">
+                            <h3 id="reportTitle">Report</h3>
+                            <div class="report-actions">
+                                <button id="printReportBtn" class="btn btn--outline btn--sm">
+                                    <i class="fas fa-print"></i> Print
+                                </button>
+                                <button id="exportReportBtn" class="btn btn--primary btn--sm">
+                                    <i class="fas fa-download"></i> Export
+                                </button>
+                            </div>
+                        </div>
+                        <div id="reportBody">
+                            <!-- Report content will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Page -->
+            <div id="settings" class="page">
+                <div class="page-header">
+                    <h1>Settings</h1>
+                </div>
+                
+                <div class="settings-grid">
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>User Profile</h3>
+                            <form id="profileForm">
+                                <div class="form-group">
+                                    <label class="form-label">Full Name</label>
+                                    <input type="text" id="profileName" class="form-control" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Username</label>
+                                    <input type="text" id="profileUsername" class="form-control" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" id="profileEmail" class="form-control" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Role</label>
+                                    <input type="text" id="profileRole" class="form-control" readonly>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>System Preferences</h3>
+                            <form id="preferencesForm">
+                                <div class="form-group">
+                                    <label class="form-label">Currency</label>
+                                    <select class="form-control">
+                                        <option value="INR" selected>INR (₹)</option>
+                                        <option value="USD">USD ($)</option>
+                                        <option value="EUR">EUR (€)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Date Format</label>
+                                    <select class="form-control">
+                                        <option value="DD-MM-YYYY" selected>DD-MM-YYYY</option>
+                                        <option value="MM-DD-YYYY">MM-DD-YYYY</option>
+                                        <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                                    </select>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Alarm Notifications Card -->
+                    <div class="card alarm-settings-card">
+                        <div class="card__body">
+                            <div class="tg-settings-header">
+                                <div class="tg-settings-title">
+                                    <i class="fas fa-bell alarm-icon-pulse"></i>
+                                    <div>
+                                        <h3>Alarm Notifications</h3>
+                                        <p>Get popup alarms + sound on your laptop for critical alerts</p>
+                                    </div>
+                                </div>
+                                <span id="alarmSettingsBadge" class="tg-settings-badge tg-settings-badge--on">✓ Active</span>
+                            </div>
+                            <ul class="tg-feature-list">
+                                <li><i class="fas fa-check"></i> Popup alarm overlay with sound — right in your browser</li>
+                                <li><i class="fas fa-check"></i> Works even when you're on a different tab</li>
+                                <li><i class="fas fa-check"></i> Snooze for 30 minutes with one click</li>
+                                <li><i class="fas fa-check"></i> Choose check interval: 5, 15, 30 min or 1 hour</li>
+                                <li><i class="fas fa-check"></i> Set minimum severity — Critical, High, or Medium</li>
+                            </ul>
+                            <div class="tg-settings-actions">
+                                <button class="btn btn--primary" onclick="openAlarmSettings()">
+                                    <i class="fas fa-sliders-h"></i> Configure Alarms
+                                </button>
+                                <button class="btn btn--outline" onclick="previewAlarm()">
+                                    <i class="fas fa-play"></i> Preview Alarm
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="card__body">
+                            <h3>Data Management</h3>
+                            <div class="data-actions">
+                                <button id="backupDataBtn" class="btn btn--primary btn--full-width">
+                                    <i class="fas fa-download"></i> Backup Data
+                                </button>
+                                <div class="form-group">
+                                    <label class="form-label">Restore Data</label>
+                                    <input type="file" id="restoreFileInput" accept=".json" class="form-control">
+                                    <button id="restoreDataBtn" class="btn btn--outline btn--full-width mt-8">
+                                        <i class="fas fa-upload"></i> Restore Data
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for Forms -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Form</h3>
+                <button id="closeModal" class="modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Modal content will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <div class="toast-content">
+            <span id="toastMessage"></span>
+            <button id="closeToast" class="toast-close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2026 Food Management System v1.0</p>
+        </div>
+    </footer>
+
+    <!-- Alert Panel Overlay -->
+    <div id="alertOverlay" class="alert-overlay" onclick="closeAlertPanel()"></div>
+
+    <!-- Alert Slide-in Panel -->
+    <aside id="alertPanel" class="alert-panel">
+        <!-- populated by alerts.js -->
+    </aside>
+
+
+    <!-- OS Notification permission banner -->
+    <div id="notifBanner" class="notif-banner hidden">
+        <i class="fas fa-bell"></i>
+        <span>Allow OS notifications to receive alerts even when this tab is in the background</span>
+        <button class="notif-banner__allow" onclick="requestBrowserNotifPermission(ok => { dismissNotifBanner(); showToast(ok ? 'OS notifications enabled!' : 'Blocked — allow in browser settings.', ok ? 'success' : 'error'); })">Allow</button>
+        <button class="notif-banner__dismiss" onclick="dismissNotifBanner()"><i class="fas fa-times"></i></button>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="alerts.js"></script>
+    <script src="features.js"></script>
+    <script>
+    // ── Service Worker (offline cache only) ───
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js').catch(() => {});
+        });
+        navigator.serviceWorker.addEventListener('message', e => {
+            if (e.data && e.data.type === 'OPEN_ALERTS') {
+                if (typeof toggleAlertPanel === 'function' && !alertPanelOpen) toggleAlertPanel();
+            }
+        });
+    }
+
+    function dismissNotifBanner() {
+        document.getElementById('notifBanner').classList.add('hidden');
+        localStorage.setItem('fms_notif_banner_dismissed', '1');
+    }
+
+    function maybeShowNotifBanner() {
+        if (!('Notification' in window)) return;
+        if (Notification.permission === 'granted') return;
+        if (Notification.permission === 'denied') return;
+        if (localStorage.getItem('fms_notif_banner_dismissed')) return;
+        setTimeout(() => {
+            document.getElementById('notifBanner').classList.remove('hidden');
+        }, 4000);
+    }
+
+    window._maybeShowNotifBanner = maybeShowNotifBanner;
+    window.dismissNotifBanner    = dismissNotifBanner;
+    </script>
+</body>
+</html>
