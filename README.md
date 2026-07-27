@@ -33,6 +33,68 @@ Food-Management-System/
 │── features.js
 ```
 
+## 📸 Screenshots
+
+### 🔐 Login Page
+
+![Login Page](screenshots/login.png)
+
+### 📝 Registration Page
+
+![Registration Page](screenshots/register.png)
+
+### 📊 Dashboard
+
+![Dashboard](screenshots/dashboard.png)
+
+### 📦 Inventory Management
+
+![Inventory Management](screenshots/inventory.png)
+
+### 🚚 Supplier Management
+
+![Supplier Management](screenshots/suppliers.png)
+
+### 🧪 HACCP Management
+
+![HACCP Management](screenshots/HACCP.png)
+
+### 📈 Reports & Analytics
+
+![Reports & Analytics](screenshots/reports.png)
+
+### 📉 Charts & Visualizations
+
+![Charts](screenshots/charts.png)
+
+### 🚨 Alarm Alerts
+
+![Alarm Alerts](screenshots/alarm_alert.png)
+
+### 🔔 Notification Alerts
+
+![Notification Alerts](screenshots/notification_alerts.png)
+
+### 🗑️ Food Wastage Record
+
+![Food Wastage Record](screenshots/wastage_record.png)
+
+### 📋 Food Wastage Tracking
+
+![Food Wastage Tracking](screenshots/wastage_track.png)
+
+### 📑 Supplier Report
+
+![Supplier Report](screenshots/supplier_report.png)
+
+### ⚙️ Settings
+
+![Settings](screenshots/settings.png)
+
+### ⌨️ Keyboard Shortcuts
+
+![Keyboard Shortcuts](screenshots/shortcuts.png)
+
 ## 🚀 How to Run
 
 1. Download the project.
