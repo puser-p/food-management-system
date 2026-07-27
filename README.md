@@ -43,6 +43,10 @@ or
 
 Open with **Live Server** in VS Code.
 
+## 🌐 Live Demo
+
+https://puser-p.github.io/food-management-system/
+
 ## 👩‍💻 Author
 
 Pragati Singhal
